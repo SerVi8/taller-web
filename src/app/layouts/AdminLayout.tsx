@@ -7,9 +7,7 @@ export function AdminLayout() {
         {/* Sidebar */}
         <aside className="hidden w-64 border-r bg-card md:block">
           <div className="flex h-16 items-center border-b px-6">
-            <h1 className="text-primary font-semibold">
-              Lubrillantas
-            </h1>
+            <h1 className="text-primary font-semibold">Lubrillantas</h1>
           </div>
 
           <nav className="p-4">
@@ -21,9 +19,7 @@ export function AdminLayout() {
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Header */}
           <header className="flex h-16 items-center border-b bg-card px-6">
-            <h2 className="text-sm font-medium">
-              Sistema Administrativo
-            </h2>
+            <h2 className="text-sm font-medium">Sistema Administrativo</h2>
           </header>
 
           {/* Página actual */}

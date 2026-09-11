@@ -1,28 +1,47 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 import { AdminLayout } from "../layouts/AdminLayout";
-import { Button } from "@/components/ui/button";
-
-const DashboardPage = () => {
-  return (
-    <>
-      <Button>Boton</Button>
-    </>
-  );
-};
+import { HomePage } from "@/features/home/pages/HomePage";
+import AuthLayout from "../layouts/AuthLayout";
+import { LoginPage } from "@/features/auth/pages/LoginPage";
+import { ProtectedRoute, PublicOnlyRoute } from "./guards";
 
 export const routes: RouteObject[] = [
   {
-    path: "/admin",
-    element: <AdminLayout />,
+    element: <PublicOnlyRoute />,
     children: [
       {
-        index: true,
-        element: <Navigate to="/admin/h" replace />,
-      },
-      {
-        path: "h",
-        element: <DashboardPage />,
+        path: "/login",
+        element: <AuthLayout />,
+        children: [
+          {
+            index: true,
+            element: <LoginPage />,
+          },
+        ],
       },
     ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "orders",
+            element: <>Ordenes de trabajo</>,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to={"/admin"} replace />,
   },
 ];
