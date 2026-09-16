@@ -60,8 +60,8 @@ export function AppSidebar() {
                 const Icon = item.icon;
 
                 return (
-                  <Link to={item.url}>
-                    <SidebarMenuItem key={item.url}>
+                  <Link to={item.url} key={item.url}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         isActive={isActive(item.url)}
                         tooltip={item.title}
@@ -86,8 +86,8 @@ export function AppSidebar() {
                 const Icon = item.icon;
 
                 return (
-                  <Link to={item.url}>
-                    <SidebarMenuItem key={item.url}>
+                  <Link to={item.url} key={item.url}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         isActive={isActive(item.url)}
                         tooltip={item.title}

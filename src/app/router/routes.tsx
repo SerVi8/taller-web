@@ -4,6 +4,7 @@ import { HomePage } from "@/features/home/pages/HomePage";
 import AuthLayout from "../layouts/AuthLayout";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { ProtectedRoute, PublicOnlyRoute } from "./guards";
+import { ClientsPage } from "@/features/clients/pages/ClientsPage";
 
 export const routes: RouteObject[] = [
   {
@@ -35,6 +36,10 @@ export const routes: RouteObject[] = [
           {
             path: "orders",
             element: <>Ordenes de trabajo</>,
+          },
+          {
+            path: "clients",
+            element: <ClientsPage />,
           },
         ],
       },
