@@ -1,4 +1,3 @@
-import "./App.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router";
 import { Toaster } from "./components/ui/toast";
@@ -6,7 +5,7 @@ import { Toaster } from "./components/ui/toast";
 function App() {
   return (
     <>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
       <Toaster />
     </>
   );

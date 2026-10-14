@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useLogin } from "../hooks/useAuth";
 import { Controller, useForm } from "react-hook-form";
 import { loginSchema, type LoginFormData } from "../schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,7 @@ import { useState } from "react";
 export const LoginForm = () => {
   const navigate = useNavigate();
 
-  const { login } = useAuth();
+  const login = useLogin();
 
   const [errorForm, setErrorForm] = useState<null | string>(null);
 
@@ -31,7 +31,7 @@ export const LoginForm = () => {
   const onSubmit = async (data: LoginFormData) => {
     setErrorForm(null);
     try {
-      await login(data);
+      await login.mutateAsync(data);
       navigate("/admin", { replace: true });
     } catch (error) {
       setErrorForm(

@@ -1,36 +1,22 @@
+import { api } from "@/lib/api";
 import type {
+  AuthUser,
   LoginCredentials,
   LoginResponse,
 } from "../types/auth.types";
 
-const MOCK_USER = {
-  id: "1",
-  username: "admin",
-  password: "123456",
-  name: "Administrador",
-  role: "admin" as const,
-};
+const apiURL = "/auth"
 
-export async function login(
-  credentials: LoginCredentials,
-): Promise<LoginResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const username = credentials.username.trim();
-
-  if (
-    username !== MOCK_USER.username ||
-    credentials.password !== MOCK_USER.password
-  ) {
-    throw new Error("Usuario o contraseña incorrectos");
-  }
-
-  return {
-    user: {
-      id: MOCK_USER.id,
-      username: MOCK_USER.username,
-      name: MOCK_USER.name,
-      role: MOCK_USER.role,
-    },
-  };
+export const authService = {
+  login: async (credentials:LoginCredentials): Promise<LoginResponse> =>{
+    const response = await api.post<LoginResponse>(apiURL + "/login", credentials )
+    return response.data
+  },
+  getCurrentUser: async (): Promise<AuthUser> => {
+    const response = await api.get<{user:AuthUser}>(apiURL + "/me")
+    return response.data.user
+  },
+  logout: async (): Promise<void> =>{
+    await api.post(apiURL + "/logout")
+  },
 }

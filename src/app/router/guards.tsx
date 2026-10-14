@@ -1,11 +1,12 @@
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export function ProtectedRoute() {
   const location = useLocation();
 
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, isLoading } = useAuth();
 
+  if (isLoading) return <>Cargando...</>;
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
@@ -13,10 +14,14 @@ export function ProtectedRoute() {
 }
 
 export function PublicOnlyRoute() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const location = useLocation();
+  const { isAuthenticated, isLoading } = useAuth();
 
+  if (isLoading) return <>Cargando...</>;
   if (isAuthenticated) {
-    return <Navigate to="/admin" replace />;
+    const from =
+      (location.state as { from?: Location })?.from?.pathname ?? "/admin";
+    return <Navigate to={from} replace />;
   }
 
   return <Outlet />;

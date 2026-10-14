@@ -1,31 +1,53 @@
-import { login as loginService } from "../services/auth.service";
-import { useAuthStore } from "../store/auth.store";
-import type { LoginCredentials } from "../types/auth.types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authService } from "../services/auth.service";
+import { ApiError } from "@/types/api-error";
 
 
+export const AUTH_QUERY_KEY = ["auth, me"] as const;
+
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: AUTH_QUERY_KEY,
+    queryFn: async () => {
+      try {
+        return await authService.getCurrentUser();
+      } catch (error) {
+        // 401 = simplemente no hay sesión, no es un error de la app
+        if (error instanceof ApiError && error.status === 401) return null;
+        throw error;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+}
+
+
+export function useLogin () {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn:authService.login,
+    onSuccess: ({user}) => {
+      queryClient.setQueryData(AUTH_QUERY_KEY, user)
+    }
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: authService.logout,
+    onSettled: () => {
+      queryClient.setQueryData(AUTH_QUERY_KEY, null);
+      queryClient.removeQueries({
+        predicate: (q) => q.queryKey[0] !== "auth", // limpia datos de la sesión anterior
+      });
+    },
+  });
+}
+
+// Hook de lectura para componentes: ¿quién soy?
 export function useAuth() {
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore(
-    (state) => state.isAuthenticated,
-  );
-
-  const loginStore = useAuthStore((state) => state.login);
-  const logoutStore = useAuthStore((state) => state.logout);
-
-  const login = async (credentials: LoginCredentials) => {
-    const response = await loginService(credentials);
-    loginStore(response.user);
-    return response.user;
-  };
-
-  const logout = () => {
-    logoutStore();
-  };
-
-  return {
-    user,
-    isAuthenticated,
-    login,
-    logout,
-  };
+  const { data: user, isLoading } = useCurrentUser();
+  return { user: user ?? null, isAuthenticated: !!user, isLoading };
 }

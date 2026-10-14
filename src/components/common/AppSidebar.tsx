@@ -15,14 +15,16 @@ import {
 
 import { mainNavigation, secondaryNavigation } from "@/config/navigation";
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuth, useLogout } from "@/features/auth/hooks/useAuth";
 
 export function AppSidebar() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  const logout = useLogout();
 
   const handleLogout = () => {
-    logout();
+    logout.mutate();
   };
 
   const isActive = (url: string) => {
@@ -107,20 +109,22 @@ export function AppSidebar() {
       <SidebarFooter>
         <div className="flex items-center gap-3 border-t px-2 py-3">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
-            {user?.name?.charAt(0).toUpperCase()}
+            {isLoading ? "…" : (user?.name?.charAt(0).toUpperCase() ?? "?")}
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{user?.name}</p>
-
+            <p className="truncate text-sm font-medium">
+              {user?.name ?? "Cargando..."}
+            </p>
             <p className="truncate text-xs text-muted-foreground">
-              {user?.username}
+              {user?.role}
             </p>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
+            disabled={logout.isPending}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
             Salir
