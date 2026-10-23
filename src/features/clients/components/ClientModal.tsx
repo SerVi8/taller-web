@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { Cliente } from "../types/client.types";
+import type { Client } from "../model/client.types";
 import {
   Dialog,
   DialogContent,
@@ -8,24 +8,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ClientForm } from "./ClientForm";
-import type { ClienteFormData } from "../schemas/client.schema";
+import type { ClientFormValues } from "../model/client.schema";
 
 type ClienteModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  cliente?: Cliente;
-  onSubmit: (data: ClienteFormData) => Promise<void>;
+  client?: Client;
+  onSubmit: (data: ClientFormValues) => Promise<void>;
   isSubmitting?: boolean;
+  isLoadingClient?: boolean;
 };
 
 export const ClientModal: FC<ClienteModalProps> = ({
   open,
   onOpenChange,
-  cliente,
+  client,
   onSubmit,
   isSubmitting = false,
+  isLoadingClient = false,
 }) => {
-  const isEditing = Boolean(cliente);
+  const isEditing = Boolean(client);
   const handleCancel = () => {
     if (!isSubmitting) {
       onOpenChange(false);
@@ -34,23 +36,23 @@ export const ClientModal: FC<ClienteModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={isSubmitting ? undefined : onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar cliente" : "Nuevo cliente"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Modifica los datos del cliente."
-              : "Registra un nuevo cliente del taller."}
+              ? "Modifica los datos del cliente y sus vehículos."
+              : "Registra un nuevo cliente y sus vehículos."}
           </DialogDescription>
         </DialogHeader>
-        <ClientForm
-          cliente={cliente}
+        {isLoadingClient ? <p className="py-8 text-center text-muted-foreground">Cargando información del cliente...</p> : <ClientForm
+          client={client}
           onSubmit={onSubmit}
           onCancel={handleCancel}
           isSubmitting={isSubmitting}
-        />
+        />}
       </DialogContent>
     </Dialog>
   );

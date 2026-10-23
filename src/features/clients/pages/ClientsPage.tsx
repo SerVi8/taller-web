@@ -1,129 +1,25 @@
-import { useState } from "react";
-import type { Cliente, ClienteFilters } from "../types/client.types";
 import PageHeader from "@/components/common/PageHeader/PageHeader";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog/ConfirmDialog";
+import { EmptyState } from "@/components/common/EmptyState/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState/ErrorState";
+import { LoadingState } from "@/components/common/LoadingState/LoadingState";
+import { Pagination } from "@/components/common/DataTable/Pagination";
+import { Plus } from "lucide-react";
 import { ClientsFilter } from "../components/ClientsFilter";
 import { ClientsTable } from "../components/ClientsTable";
+import { ClientDetailsModal } from "../components/ClientDetailsModal";
 import { ClientModal } from "../components/ClientModal";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog/ConfirmDialog";
-import {
-  useClientes,
-  useCreateCliente,
-  useDeleteCliente,
-  useUpdateCliente,
-} from "../hooks/useClients";
-import { toastError, toastSuccess } from "@/lib/toast";
-import { getApiErrorMessage } from "@/lib/api-error";
-import type { ClienteFormData } from "../schemas/client.schema";
-import { LoadingState } from "@/components/common/LoadingState/LoadingState";
-import { ErrorState } from "@/components/common/ErrorState/ErrorState";
-import { EmptyState } from "@/components/common/EmptyState/EmptyState";
-import { Plus } from "lucide-react";
-import { Pagination } from "@/components/common/DataTable/Pagination";
+import { useClientsPage } from "../hooks/useClientsPage";
+import { getApiErrorMessage } from "@/lib/http/get-api-error-message";
 
 export const ClientsPage = () => {
-  const [filters, setFilters] = useState<ClienteFilters>({
-    search: "",
-    page: 1,
-    limit: 10,
-  });
+  const page = useClientsPage();
+  const { clientsQuery } = page;
 
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>();
-
-  const [clientToDelete, setClientToDelete] = useState<Cliente | null>(null);
-
-  const clientsQuery = useClientes(filters);
-  const createClient = useCreateCliente();
-  const updateClient = useUpdateCliente();
-  const deleteClient = useDeleteCliente();
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-
-  const isSaving = createClient.isPending || updateClient.isPending;
-
-  const handleSearchChange = (search: string) => {
-    setFilters({
-      search,
-      page: 1,
-      limit: filters.limit,
-    });
-  };
-
-  const handleCreate = () => {
-    setSelectedClient(undefined);
-    setModalOpen(true);
-  };
-
-  const handleEdit = (cliente: Cliente) => {
-    setSelectedClient(cliente);
-    setModalOpen(true);
-  };
-
-  const handleSubmit = async (data: ClienteFormData) => {
-    try {
-      if (selectedClient) {
-        await updateClient.mutateAsync({
-          id: selectedClient.id,
-          data,
-        });
-
-        toastSuccess("Cliente actualizado correctamente");
-      } else {
-        await createClient.mutateAsync(data);
-        toastSuccess("Cliente registrado correctamente");
-      }
-
-      setModalOpen(false);
-      setSelectedClient(undefined);
-    } catch (error) {
-      toastError(
-        getApiErrorMessage(
-          error,
-          selectedClient
-            ? "No se pudo actualizar el cliente."
-            : "No se pudo registrar el cliente.",
-        ),
-      );
-    }
-  };
-
-  const handleDeleteRequest = (cliente: Cliente) => {
-    setClientToDelete(cliente);
-    setDeleteOpen(true);
-  };
-
-  const handleDelete = async () => {
-    if (!clientToDelete) {
-      return;
-    }
-
-    try {
-      await deleteClient.mutateAsync(clientToDelete.id);
-
-      toastSuccess("Cliente eliminado correctamente");
-
-      setClientToDelete(null);
-      setDeleteOpen(false);
-    } catch (error) {
-      toastError(getApiErrorMessage(error, "No se pudo eliminar el cliente."));
-    }
-  };
-
-  const handleModalChange = (open: boolean) => {
-    setModalOpen(open);
-
-    if (!open) {
-      setSelectedClient(undefined);
-    }
-  };
-
-  if (clientsQuery.isLoading) {
+  if (clientsQuery.isLoading)
     return <LoadingState message="Cargando clientes..." />;
-  }
-
-  if (clientsQuery.isError) {
+  if (clientsQuery.isError)
     return (
       <ErrorState
         title="No se pudieron cargar los clientes"
@@ -134,75 +30,84 @@ export const ClientsPage = () => {
         onRetry={() => clientsQuery.refetch()}
       />
     );
-  }
+
+  const clients = clientsQuery.data!;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Clientes"
         description="Gestiona los clientes registrados en el taller."
-        action={<Button onClick={handleCreate}>Nuevo cliente</Button>}
+        action={
+          <Button onClick={page.handleCreate}>
+            <Plus /> Nuevo cliente
+          </Button>
+        }
       />
-
       <ClientsFilter
-        search={filters.search}
-        onSearchChange={handleSearchChange}
+        search={page.search}
+        onSearchChange={page.handleSearchChange}
       />
-
-      {clientsQuery.isSuccess && clientsQuery.data.data.length === 0 && (
+      {clients.data.length === 0 ? (
         <EmptyState
           title={
-            filters.search
+            page.search
               ? "No se encontraron clientes"
               : "No hay clientes registrados"
           }
           action={
-            !filters.search && (
-              <Button onClick={handleCreate}>
-                <Plus />
-                Registrar cliente
+            !page.search && (
+              <Button onClick={page.handleCreate}>
+                <Plus /> Registrar cliente
               </Button>
             )
           }
         />
-      )}
-
-      {clientsQuery.isSuccess && clientsQuery.data.data.length > 0 && (
+      ) : (
         <>
           <ClientsTable
-            clientes={clientsQuery.data.data}
-            onEdit={handleEdit}
-            onDelete={handleDeleteRequest}
+            clientes={clients.data}
+            onView={page.handleView}
+            onEdit={page.handleEdit}
+            onDelete={page.handleDeleteRequest}
           />
-
           <Pagination
-            page={clientsQuery.data.pagination.page}
-            totalPages={clientsQuery.data.pagination.totalPages}
-            onPageChange={() => {}}
+            page={clients.meta.page}
+            totalPages={clients.meta.totalPages}
+            onPageChange={page.handlePageChange}
           />
         </>
       )}
 
       <ClientModal
-        open={modalOpen}
-        onOpenChange={handleModalChange}
-        cliente={selectedClient}
-        onSubmit={handleSubmit}
-        isSubmitting={isSaving}
+        open={page.modalOpen}
+        onOpenChange={page.closeForm}
+        client={page.selectedClient ? page.detailQuery.data : undefined}
+        isLoadingClient={Boolean(
+          page.selectedClient && page.detailQuery.isLoading,
+        )}
+        onSubmit={page.handleSubmit}
+        isSubmitting={page.isSaving}
       />
-
+      <ClientDetailsModal
+        open={page.detailsOpen}
+        onOpenChange={page.closeDetails}
+        client={page.detailQuery.data}
+        isLoading={page.detailQuery.isLoading}
+        onEdit={page.editFromDetails}
+      />
       <ConfirmDialog
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
+        open={page.deleteOpen}
+        onOpenChange={page.setDeleteOpen}
         title="¿Eliminar cliente?"
         description={
-          clientToDelete
-            ? `Se eliminará a ${clientToDelete.nombre}. Esta acción no se puede deshacer.`
+          page.clientToDelete
+            ? `Se desactivará a ${page.clientToDelete.name}.`
             : undefined
         }
         confirmText="Eliminar"
-        onConfirm={handleDelete}
-        loading={deleteClient.isPending}
+        onConfirm={page.handleDelete}
+        loading={page.isDeleting}
       />
     </div>
   );
