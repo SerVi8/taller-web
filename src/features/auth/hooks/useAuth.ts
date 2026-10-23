@@ -1,16 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { authService } from "../services/auth.service";
-import { ApiError } from "@/types/api-error";
+import { authApi } from "../api/auth.api";
+import { AUTH_QUERY_KEY } from "../model/auth.keys";
+import { ApiError } from "@/lib/http/api-error";
 
-
-export const AUTH_QUERY_KEY = ["auth, me"] as const;
 
 export function useCurrentUser() {
   return useQuery({
     queryKey: AUTH_QUERY_KEY,
     queryFn: async () => {
       try {
-        return await authService.getCurrentUser();
+        return await authApi.getCurrentUser();
       } catch (error) {
         // 401 = simplemente no hay sesión, no es un error de la app
         if (error instanceof ApiError && error.status === 401) return null;
@@ -26,7 +25,7 @@ export function useCurrentUser() {
 export function useLogin () {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn:authService.login,
+    mutationFn: authApi.login,
     onSuccess: ({user}) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, user)
     }
@@ -36,7 +35,7 @@ export function useLogin () {
 export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: authService.logout,
+    mutationFn: authApi.logout,
     onSettled: () => {
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
       queryClient.removeQueries({

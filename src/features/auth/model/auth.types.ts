@@ -1,9 +1,9 @@
-export type UserRole = "owner" | "admin" | "mechanic";
+export type UserRole = "admin" | "mecanico";
 
 export interface AuthUser {
-  id: string;
-  username: string;
+  id: number;
   name: string;
+  email: string;
   role: UserRole;
 }
 
