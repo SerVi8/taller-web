@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useAuth";
 import { Controller, useForm } from "react-hook-form";
-import { loginSchema, type LoginFormData } from "../schemas/login.schema";
+import { loginSchema, type LoginFormData } from "../model/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 

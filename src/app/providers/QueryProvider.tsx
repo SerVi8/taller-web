@@ -1,5 +1,5 @@
-import { AUTH_QUERY_KEY } from "@/features/auth/hooks/useAuth";
-import { ApiError } from "@/types/api-error";
+import { AUTH_QUERY_KEY } from "@/features/auth/model/auth.keys";
+import { ApiError } from "@/lib/http/api-error";
 import {
   QueryCache,
   QueryClient,
