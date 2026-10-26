@@ -10,27 +10,27 @@ import {
 
 interface ConfirmDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   title: string;
   description?: string;
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
   loading?: boolean;
+  onClose: () => void;
 }
 
 export function ConfirmDialog({
   open,
-  onOpenChange,
   title,
   description,
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   onConfirm,
   loading = false,
+  onClose,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -41,7 +41,7 @@ export function ConfirmDialog({
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => onClose()}
             disabled={loading}
           >
             {cancelText}
