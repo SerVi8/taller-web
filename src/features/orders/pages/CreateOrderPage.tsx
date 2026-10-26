@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Car, Plus, Trash2, UserPlus } from "lucide-react";
@@ -48,6 +48,8 @@ import { QuickAddVehicleModal } from "../components/QuickAddVehicleModal";
 
 export const CreateOrderPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isAlignmentPreset = searchParams.get("preset") === "alignment";
   const { createOrder, isCreating } = useOrderCommands();
   const createClientMutation = useCreateClient();
 
@@ -59,7 +61,20 @@ export const CreateOrderPage = () => {
 
   const form = useForm<CreateOrderFormValues>({
     resolver: zodResolver(createOrderFormSchema),
-    defaultValues: getCreateOrderDefaults(),
+    defaultValues: isAlignmentPreset
+      ? {
+          ...getCreateOrderDefaults(),
+          complaint: "Servicio de alineado y balanceado",
+          services: [
+            {
+              title: "Alineado y Balanceado",
+              description: "Servicio de alineación y balanceo",
+              price: 120,
+              complete: false,
+            },
+          ],
+        }
+      : getCreateOrderDefaults(),
   });
 
   const {
@@ -107,9 +122,7 @@ export const CreateOrderPage = () => {
         shouldValidate: Boolean(firstVehicle),
       });
     } catch (error) {
-      toastError(
-        getApiErrorMessage(error, "No se pudo registrar el cliente."),
-      );
+      toastError(getApiErrorMessage(error, "No se pudo registrar el cliente."));
     }
   };
 
@@ -151,7 +164,8 @@ export const CreateOrderPage = () => {
           <CardHeader>
             <CardTitle>1. Cliente y Vehículo</CardTitle>
             <CardDescription>
-              Busca un cliente existente o registra uno nuevo con su vehículo sin salir de esta pantalla.
+              Busca un cliente existente o registra uno nuevo con su vehículo
+              sin salir de esta pantalla.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
@@ -287,7 +301,8 @@ export const CreateOrderPage = () => {
           <CardHeader>
             <CardTitle>2. Recepción e Informe Inicial</CardTitle>
             <CardDescription>
-              Describe el problema reportado por el cliente y las notas iniciales de inspección.
+              Describe el problema reportado por el cliente y las notas
+              iniciales de inspección.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
@@ -349,7 +364,8 @@ export const CreateOrderPage = () => {
             <div>
               <CardTitle>3. Servicios / Mano de Obra (Opcional)</CardTitle>
               <CardDescription>
-                Puedes agregarlos ahora o más adelante desde la vista de trabajo de la orden.
+                Puedes agregarlos ahora o más adelante desde la vista de trabajo
+                de la orden.
               </CardDescription>
             </div>
             <Button
@@ -446,7 +462,8 @@ export const CreateOrderPage = () => {
             <div>
               <CardTitle>4. Repuestos e Insumos (Opcional)</CardTitle>
               <CardDescription>
-                Los productos agregados aquí se descontarán automáticamente del inventario al crear la orden.
+                Los productos agregados aquí se descontarán automáticamente del
+                inventario al crear la orden.
               </CardDescription>
             </div>
             <Button
