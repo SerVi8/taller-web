@@ -79,9 +79,13 @@ export function ProductPicker({ value, onChange }: Props) {
                     value === p.id ? "size-4 opacity-100" : "size-4 opacity-0"
                   }
                 />
-                <span className="truncate">
-                  {p.sku} · {p.name}
-                </span>
+                <div>
+                  <span className="truncate">{p.name}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {" "}
+                    - {p.sku}
+                  </span>
+                </div>
                 <CommandShortcut>
                   {p.stock} {p.unit}
                 </CommandShortcut>
