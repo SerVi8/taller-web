@@ -16,6 +16,8 @@ import {
 import { mainNavigation, secondaryNavigation } from "@/config/navigation";
 
 import { useAuth, useLogout } from "@/features/auth/hooks/useAuth";
+import { NavGroupItem } from "./NavGrupItem";
+import { NavLinkItem } from "./NavLinkItem";
 
 export function AppSidebar() {
   const location = useLocation();
@@ -58,23 +60,21 @@ export function AppSidebar() {
           <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavigation.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <Link to={item.url} key={item.url}>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        isActive={isActive(item.url)}
-                        tooltip={item.title}
-                      >
-                        <Icon />
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </Link>
-                );
-              })}
+              {mainNavigation.map((item) =>
+                item.items ? (
+                  <NavGroupItem
+                    key={item.title}
+                    item={item}
+                    isActive={isActive}
+                  />
+                ) : (
+                  <NavLinkItem
+                    key={item.url}
+                    item={item}
+                    isActive={isActive(item.url!)}
+                  />
+                ),
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

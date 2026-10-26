@@ -11,7 +11,21 @@ import {
   Home,
 } from "lucide-react";
 
-export const mainNavigation = [
+import type { LucideIcon } from "lucide-react";
+
+export interface NavSubItem {
+  title: string;
+  url: string;
+}
+
+export interface NavItem {
+  title: string;
+  icon: LucideIcon;
+  url?: string; // enlace directo
+  items?: NavSubItem[]; // si existe, es un grupo colapsable
+}
+
+export const mainNavigation: NavItem[] = [
   {
     title: "Inicio",
     url: "/admin",
@@ -39,8 +53,17 @@ export const mainNavigation = [
   },
   {
     title: "Inventario",
-    url: "/admin/inventory",
     icon: Package,
+    items: [
+      {
+        title: "Productos",
+        url: "/admin/inventory/products",
+      },
+      {
+        title: "Movimiento",
+        url: "/admin/inventory/movements",
+      },
+    ],
   },
   {
     title: "Servicios",

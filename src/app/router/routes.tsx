@@ -5,6 +5,11 @@ import AuthLayout from "../layouts/AuthLayout";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { ProtectedRoute, PublicOnlyRoute } from "./guards";
 import { ClientsPage } from "@/features/clients/pages/ClientsPage";
+import { ProductPage } from "@/features/inventory/pages/ProductsPage";
+import { StockMovementsPage } from "@/features/inventory/pages/StockMovementsPage";
+import { OrdersPage } from "@/features/orders/pages/OrdersPage";
+import { CreateOrderPage } from "@/features/orders/pages/CreateOrderPage";
+import { OrderWorkspacePage } from "@/features/orders/pages/OrderWorkspacePage";
 
 export const routes: RouteObject[] = [
   {
@@ -35,11 +40,37 @@ export const routes: RouteObject[] = [
           },
           {
             path: "orders",
-            element: <>Ordenes de trabajo</>,
+            children: [
+              {
+                index: true,
+                element: <OrdersPage />,
+              },
+              {
+                path: "new",
+                element: <CreateOrderPage />,
+              },
+              {
+                path: ":code",
+                element: <OrderWorkspacePage />,
+              },
+            ],
           },
           {
             path: "clients",
             element: <ClientsPage />,
+          },
+          {
+            path: "inventory",
+            children: [
+              {
+                path: "products",
+                element: <ProductPage />,
+              },
+              {
+                path: "movements",
+                element: <StockMovementsPage />,
+              },
+            ],
           },
         ],
       },

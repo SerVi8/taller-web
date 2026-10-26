@@ -6,7 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-import { AppSidebar } from "@/components/common/AppSidebar";
+import { AppSidebar } from "@/components/common/Sidebar/AppSidebar";
 
 export function AdminLayout() {
   return (
