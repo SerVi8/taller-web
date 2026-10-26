@@ -15,7 +15,7 @@ import { getApiErrorMessage } from "@/lib/http/get-api-error-message";
 
 export const ClientsPage = () => {
   const page = useClientsPage();
-  const { clientsQuery } = page;
+  const { list, dialogs, clientsQuery } = page;
 
   if (clientsQuery.isLoading)
     return <LoadingState message="Cargando clientes..." />;
@@ -39,26 +39,23 @@ export const ClientsPage = () => {
         title="Clientes"
         description="Gestiona los clientes registrados en el taller."
         action={
-          <Button onClick={page.handleCreate}>
+          <Button onClick={dialogs.openCreate}>
             <Plus /> Nuevo cliente
           </Button>
         }
       />
-      <ClientsFilter
-        search={page.search}
-        onSearchChange={page.handleSearchChange}
-      />
+      <ClientsFilter search={list.search} onSearchChange={list.setSearch} />
       {clients.data.length === 0 ? (
         <EmptyState
           title={
-            page.search
+            list.search
               ? "No se encontraron clientes"
               : "No hay clientes registrados"
           }
           action={
-            !page.search && (
-              <Button onClick={page.handleCreate}>
-                <Plus /> Registrar cliente
+            !list.search && (
+              <Button onClick={dialogs.openCreate}>
+                <Plus /> Registrar producto
               </Button>
             )
           }
@@ -67,47 +64,47 @@ export const ClientsPage = () => {
         <>
           <ClientsTable
             clientes={clients.data}
-            onView={page.handleView}
-            onEdit={page.handleEdit}
-            onDelete={page.handleDeleteRequest}
+            onView={dialogs.openView}
+            onEdit={dialogs.openEdit}
+            onDelete={dialogs.openDelete}
           />
           <Pagination
             page={clients.meta.page}
             totalPages={clients.meta.totalPages}
-            onPageChange={page.handlePageChange}
+            onPageChange={list.setPage}
           />
         </>
       )}
 
       <ClientModal
-        open={page.modalOpen}
-        onOpenChange={page.closeForm}
-        client={page.selectedClient ? page.detailQuery.data : undefined}
-        isLoadingClient={Boolean(
-          page.selectedClient && page.detailQuery.isLoading,
-        )}
+        open={dialogs.isFormOpen}
+        client={
+          dialogs.dialog.type === "edit" ? page.detailQuery.data : undefined
+        }
+        isLoadingClient={Boolean(dialogs.item && page.detailQuery.isLoading)}
         onSubmit={page.handleSubmit}
         isSubmitting={page.isSaving}
+        onClose={dialogs.close}
       />
       <ClientDetailsModal
-        open={page.detailsOpen}
-        onOpenChange={page.closeDetails}
+        open={dialogs.isViewOpen}
         client={page.detailQuery.data}
         isLoading={page.detailQuery.isLoading}
-        onEdit={page.editFromDetails}
+        onEdit={() => {
+          dialogs.close();
+        }}
+        onClose={dialogs.close}
       />
       <ConfirmDialog
-        open={page.deleteOpen}
-        onOpenChange={page.setDeleteOpen}
+        open={dialogs.isDeleteOpen}
         title="¿Eliminar cliente?"
         description={
-          page.clientToDelete
-            ? `Se desactivará a ${page.clientToDelete.name}.`
-            : undefined
+          dialogs.item ? `Se desactivará a ${dialogs.item.name}.` : undefined
         }
         confirmText="Eliminar"
         onConfirm={page.handleDelete}
         loading={page.isDeleting}
+        onClose={dialogs.close}
       />
     </div>
   );

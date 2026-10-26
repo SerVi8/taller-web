@@ -40,7 +40,7 @@ export interface ClientInput {
 }
 
 export interface ClientFilters {
-  q: string;
+  q?: string;
   status: "active" | "inactive" | "all";
   page: number;
   limit: number;

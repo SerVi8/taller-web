@@ -11,20 +11,20 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   client?: Client;
   isLoading?: boolean;
   onEdit: () => void;
+  onClose: () => void;
 };
 
 export const ClientDetailsModal: FC<Props> = ({
   open,
-  onOpenChange,
   client,
   isLoading = false,
   onEdit,
+  onClose,
 }) => (
-  <Dialog open={open} onOpenChange={onOpenChange}>
+  <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
     <DialogContent className="sm:max-w-xl">
       <DialogHeader>
         <DialogTitle>{client?.name ?? "Detalle del cliente"}</DialogTitle>

@@ -12,30 +12,33 @@ import type { ClientFormValues } from "../model/client.schema";
 
 type ClienteModalProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   client?: Client;
   onSubmit: (data: ClientFormValues) => Promise<void>;
   isSubmitting?: boolean;
   isLoadingClient?: boolean;
+  onClose: () => void;
 };
 
 export const ClientModal: FC<ClienteModalProps> = ({
   open,
-  onOpenChange,
   client,
   onSubmit,
   isSubmitting = false,
   isLoadingClient = false,
+  onClose,
 }) => {
   const isEditing = Boolean(client);
   const handleCancel = () => {
     if (!isSubmitting) {
-      onOpenChange(false);
+      onClose();
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={isSubmitting ? undefined : onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={isSubmitting ? undefined : (o) => !o && onClose()}
+    >
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
@@ -47,12 +50,18 @@ export const ClientModal: FC<ClienteModalProps> = ({
               : "Registra un nuevo cliente y sus vehículos."}
           </DialogDescription>
         </DialogHeader>
-        {isLoadingClient ? <p className="py-8 text-center text-muted-foreground">Cargando información del cliente...</p> : <ClientForm
-          client={client}
-          onSubmit={onSubmit}
-          onCancel={handleCancel}
-          isSubmitting={isSubmitting}
-        />}
+        {isLoadingClient ? (
+          <p className="py-8 text-center text-muted-foreground">
+            Cargando información del cliente...
+          </p>
+        ) : (
+          <ClientForm
+            client={client}
+            onSubmit={onSubmit}
+            onCancel={handleCancel}
+            isSubmitting={isSubmitting}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -46,7 +46,11 @@ export const ClientForm: FC<ClientFormProps> = ({
           <ClientVehicleFields />
           <FormActions>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Guardando..." : client ? "Actualizar" : "Guardar"}
+              {isSubmitting
+                ? "Guardando..."
+                : client
+                  ? "Actualizar"
+                  : "Guardar"}
             </Button>
             <Button variant="outline" type="button" onClick={onCancel}>
               Cancelar
