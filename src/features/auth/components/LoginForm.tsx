@@ -12,6 +12,12 @@ import { Controller, useForm } from "react-hook-form";
 import { loginSchema, type LoginFormData } from "../model/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import {
+  InputGroup,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Eye, EyeOff } from "lucide-react";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -19,6 +25,7 @@ export const LoginForm = () => {
   const login = useLogin();
 
   const [errorForm, setErrorForm] = useState<null | string>(null);
+  const [hidenPass, setHidenPass] = useState<boolean>(true);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -64,13 +71,22 @@ export const LoginForm = () => {
           render={({ field, fieldState }) => (
             <Field>
               <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-              <Input
-                {...field}
-                id="password"
-                aria-invalid={fieldState.invalid}
-                placeholder="Ingresa tu contraseña"
-                type="password"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  {...field}
+                  id="password"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Ingresa tu contraseña"
+                  type={hidenPass ? "password" : "text"}
+                />
+                <InputGroupButton
+                  size="icon-xs"
+                  className=""
+                  onClick={() => setHidenPass(!hidenPass)}
+                >
+                  {hidenPass ? <EyeOff /> : <Eye />}
+                </InputGroupButton>
+              </InputGroup>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
