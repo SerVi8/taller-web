@@ -17,7 +17,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ export const LoginForm = () => {
                 />
                 <InputGroupButton
                   size="icon-xs"
-                  className=""
+                  className="mr-1"
                   onClick={() => setHidenPass(!hidenPass)}
                 >
                   {hidenPass ? <EyeOff /> : <Eye />}
@@ -93,7 +93,10 @@ export const LoginForm = () => {
         />
         {errorForm && <FieldError errors={[{ message: errorForm }]} />}
         <Field>
-          <Button type="submit">Igresar</Button>
+          <Button type="submit" disabled={login.isPending}>
+            {login.isPending && <LoaderCircle className="animate-spin" />}
+            Igresar
+          </Button>
         </Field>
       </FieldGroup>
     </form>
