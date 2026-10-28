@@ -8,7 +8,9 @@ const PageLoader = () => {
       <h1 className="uppercase text-6xl font-black">
         Lubri<span className="text-primary">llantas</span>
       </h1>
-      <Loader className="size-8 animate-spin" />
+      <span className="font-semibold text-muted-foreground animate-pulse">
+        Iniciando sistema...
+      </span>
     </div>
   );
 };
@@ -18,7 +20,7 @@ export function ProtectedRoute() {
 
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading) return <PageLoader />;
+  if (!isLoading) return <PageLoader />;
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
