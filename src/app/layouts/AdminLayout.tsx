@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { AppSidebar } from "@/components/common/Sidebar/AppSidebar";
+import { ThemeToggle } from "@/components/common/ThemeToggle/ThemeToggle";
 
 export function AdminLayout() {
   const navigate = useNavigate();
@@ -35,16 +36,20 @@ export function AdminLayout() {
             </button>
           </div>
 
-          {!isHome && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/admin")}
-            >
-              <Home className="size-4" /> Inicio
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {!isHome && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/admin")}
+              >
+                <Home className="size-4" /> Inicio
+              </Button>
+            )}
+
+            <ThemeToggle />
+          </div>
         </header>
 
         <main className="flex-1 p-6">

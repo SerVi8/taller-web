@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import {
   Sidebar,
@@ -9,11 +9,9 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { mainNavigation, secondaryNavigation } from "@/config/navigation";
+import { mainNavigation } from "@/config/navigation";
 
 import { useAuth, useLogout } from "@/features/auth/hooks/useAuth";
 import { NavGroupItem } from "./NavGrupItem";
@@ -79,7 +77,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <SidebarGroupLabel>Sistema</SidebarGroupLabel>
 
           <SidebarGroupContent>
@@ -103,7 +101,7 @@ export function AppSidebar() {
               })}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
       </SidebarContent>
 
       <SidebarFooter>

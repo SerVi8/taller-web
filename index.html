@@ -1,11 +1,28 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="es" class="light">
 
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>taller-web</title>
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem("lubrillantas-theme");
+        var parsed = raw ? JSON.parse(raw) : null;
+        var theme = parsed && parsed.state && parsed.state.theme ? parsed.state.theme : "system";
+        var resolved =
+          theme === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : theme;
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(resolved);
+      } catch (_) {}
+    })();
+  </script>
 </head>
 
 <body>

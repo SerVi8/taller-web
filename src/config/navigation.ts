@@ -1,15 +1,4 @@
-import {
-  LayoutDashboard,
-  ClipboardList,
-  Users,
-  Car,
-  Package,
-  Wrench,
-  CalendarDays,
-  CreditCard,
-  Settings,
-  Home,
-} from "lucide-react";
+import { ClipboardList, Users, Package, Home } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -31,11 +20,11 @@ export const mainNavigation: NavItem[] = [
     url: "/admin",
     icon: Home,
   },
-  {
+  /* {
     title: "Dashboard",
     url: "/admin/dashboard",
     icon: LayoutDashboard,
-  },
+  }, */
   {
     title: "Órdenes de trabajo",
     url: "/admin/orders",
@@ -46,11 +35,11 @@ export const mainNavigation: NavItem[] = [
     url: "/admin/clients",
     icon: Users,
   },
-  {
+  /* {
     title: "Vehículos",
     url: "/admin/vehicles",
     icon: Car,
-  },
+  }, */
   {
     title: "Inventario",
     icon: Package,
@@ -65,12 +54,12 @@ export const mainNavigation: NavItem[] = [
       },
     ],
   },
-  {
+  /* {
     title: "Servicios",
     url: "/admin/services",
     icon: Wrench,
-  },
-  {
+  }, */
+  /* {
     title: "Agenda",
     url: "/admin/agenda",
     icon: CalendarDays,
@@ -79,13 +68,13 @@ export const mainNavigation: NavItem[] = [
     title: "Pagos",
     url: "/admin/payments",
     icon: CreditCard,
-  },
+  }, */
 ];
 
 export const secondaryNavigation = [
-  {
+  /* {
     title: "Configuración",
     url: "/admin/settings",
     icon: Settings,
-  },
+  }, */
 ];

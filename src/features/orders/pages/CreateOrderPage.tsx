@@ -240,7 +240,7 @@ export const CreateOrderPage = () => {
                       : undefined}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false}>
                   {vehicles.map((v) => (
                     <SelectItem key={v.id} value={String(v.id)}>
                       {v.plate} ·{" "}
