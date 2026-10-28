@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth.api";
 import { AUTH_QUERY_KEY } from "../model/auth.keys";
 import { ApiError } from "@/lib/http/api-error";
-
+import { authTokenStorage } from "@/lib/http/api-client";
 
 export function useCurrentUser() {
   return useQuery({
@@ -21,14 +21,16 @@ export function useCurrentUser() {
   });
 }
 
-
-export function useLogin () {
+export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: authApi.login,
-    onSuccess: ({user}) => {
-      queryClient.setQueryData(AUTH_QUERY_KEY, user)
-    }
+    onSuccess: ({ user, token }) => {
+      if (token) {
+        authTokenStorage.set(token);
+      }
+      queryClient.setQueryData(AUTH_QUERY_KEY, user);
+    },
   });
 }
 
@@ -37,6 +39,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: authApi.logout,
     onSettled: () => {
+      authTokenStorage.clear();
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
       queryClient.removeQueries({
         predicate: (q) => q.queryKey[0] !== "auth", // limpia datos de la sesión anterior
