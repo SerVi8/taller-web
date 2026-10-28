@@ -1,5 +1,4 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Loader } from "lucide-react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const PageLoader = () => {
@@ -20,7 +19,7 @@ export function ProtectedRoute() {
 
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (!isLoading) return <PageLoader />;
+  if (isLoading) return <PageLoader />;
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
