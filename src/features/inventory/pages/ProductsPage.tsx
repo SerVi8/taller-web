@@ -4,7 +4,7 @@ import { ErrorState } from "@/components/common/ErrorState/ErrorState";
 import { getApiErrorMessage } from "@/lib/http/get-api-error-message";
 import PageHeader from "@/components/common/PageHeader/PageHeader";
 import { Button } from "@/components/ui/button";
-import { PackagePlus, Plus } from "lucide-react";
+import { NotebookText, PackagePlus, Plus } from "lucide-react";
 import { ProductsTable } from "../components/ProductsTable";
 import { Pagination } from "@/components/common/DataTable/Pagination";
 import { EmptyState } from "@/components/common/EmptyState/EmptyState";
@@ -12,9 +12,11 @@ import { ProductModal } from "../components/ProductModal";
 import { ProductFilter } from "../components/ProductFilters";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog/ConfirmDialog";
 import { StockEntryModal } from "../components/StockEntryModal";
+import { useNavigate } from "react-router-dom";
 
 export const ProductPage = () => {
   const page = useProductPage();
+  const navigate = useNavigate();
   const { list, dialogsProducts, productsQuery, dialogsStockMovent } = page;
 
   if (productsQuery.isLoading)
@@ -45,6 +47,12 @@ export const ProductPage = () => {
             </Button>
             <Button onClick={dialogsStockMovent.openCreate} variant="secondary">
               <PackagePlus /> Registrar entrada
+            </Button>
+            <Button
+              onClick={() => navigate("/admin/inventory/movements")}
+              variant="outline"
+            >
+              <NotebookText /> Ver movimientos
             </Button>
           </div>
         }
